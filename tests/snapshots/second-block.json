@@ -1,0 +1,28 @@
+{
+  "jsonrpc": "2.0",
+  "result": [
+    {
+      "from": "0xaaafb3972b05630fccee866ec69cdadd9bac2771",
+      "gas": "0x4f9958",
+      "gasUsed": "0x66a8",
+      "type": "CALL",
+      "to": "0x687528e4bc4040dc9adba05c1f00ae3633faa731",
+      "input": "0xacffee6b",
+      "output": "0x",
+      "value": "0x0",
+      "calls": [
+        {
+          "from": "0x687528e4bc4040dc9adba05c1f00ae3633faa731",
+          "gas": "0x4e5b19",
+          "gasUsed": "0x13ee1",
+          "type": "CALL",
+          "to": "0xa2db61d4d538d6a3b8b39cbd9bbe2ca396672064",
+          "input": "0x5dfc2e4a",
+          "output": "0x",
+          "value": "0x0"
+        }
+      ]
+    }
+  ],
+  "id": 1
+}

@@ -82,6 +82,8 @@ export async function startFrontierNode(provider?: string): Promise<{
 		`--port=${PORT}`,
 		`--rpc-port=${RPC_PORT}`,
 		`--enable-evm-rpc`,
+		`--ethapi=debug`,
+		`--ethapi=txpool`,
 		// `--frontier-backend-type=${FRONTIER_BACKEND_TYPE}`,
 		`--tmp`,
 		// `--unsafe-force-node-key-generation`,
