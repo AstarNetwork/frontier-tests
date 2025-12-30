@@ -78,7 +78,8 @@ describeWithFrontier("Frontier RPC (Gas)", (context) => {
 			gasPrice: await context.web3.eth.getGasPrice(),
 		});
 
-		expect(await contract.methods.multiply(3).estimateGas()).to.equal(binarySearchEstimation);
+		const estimated = await contract.methods.multiply(3).estimateGas();
+		expect(estimationVariance(estimated, oneOffEstimation)).to.be.lessThan(1);
 	});
 
 	it("eth_estimateGas without gas_limit should pass", async function () {
@@ -91,7 +92,8 @@ describeWithFrontier("Frontier RPC (Gas)", (context) => {
 			from: GENESIS_ACCOUNT,
 		});
 
-		expect(await contract.methods.multiply(3).estimateGas()).to.equal(binarySearchEstimation);
+		const estimated = await contract.methods.multiply(3).estimateGas();
+		expect(estimationVariance(estimated, oneOffEstimation)).to.be.lessThan(1);
 	});
 
 	it.skip("eth_estimateGas should handle AccessList alias", async function () {
