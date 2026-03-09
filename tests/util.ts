@@ -71,13 +71,8 @@ export async function startFrontierNode(provider?: string): Promise<{
 	const cmd = BINARY_PATH;
 	const args = [
 		`--dev`,
-		`--validator`, // Required by manual sealing to author the blocks
-		`--execution=Native`, // Faster execution using native
 		`--no-telemetry`,
 		`--no-prometheus`,
-		// `--sealing=Manual`,
-		`--no-grandpa`,
-		`--force-authoring`,
 		`-l${FRONTIER_LOG}`,
 		`--port=${PORT}`,
 		`--rpc-port=${RPC_PORT}`,
@@ -116,7 +111,7 @@ export async function startFrontierNode(provider?: string): Promise<{
 				console.log(chunk.toString());
 			}
 			binaryLogs.push(chunk);
-			if (chunk.toString().match(/best: #0/)) {
+			if (chunk.toString().match(/Imported #\d+|best: #\d+/)) {
 				if (!provider || provider == "http") {
 					// This is needed as the EVM runtime needs to warmup with a first call
 					await web3.eth.getChainId();
@@ -143,6 +138,20 @@ export async function startFrontierNode(provider?: string): Promise<{
 		chainId: CHAIN_ID,
 		name: "frontier-dev",
 	});
+
+	// Ensure tests run in explicit manual-seal mode assumptions:
+	// blocks should not advance unless we call engine_createBlock.
+	if (!provider || provider == "http") {
+		const before = await web3.eth.getBlockNumber();
+		await new Promise<void>((resolve) => setTimeout(() => resolve(), 2500));
+		const after = await web3.eth.getBlockNumber();
+		if (after !== before) {
+			throw new Error(
+				`Unexpected autonomous block production detected (before=${before}, after=${after}). ` +
+				`Frontier tests expect block progression to be controlled via engine_createBlock.`
+			);
+		}
+	}
 
 	return { web3, binary, ethersjs };
 }

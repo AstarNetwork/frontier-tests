@@ -5,7 +5,7 @@ import { AbiItem } from "web3-utils";
 
 import StateOverrideTest from "../build/contracts/StateOverrideTest.json";
 import Test from "../build/contracts/Test.json";
-import { GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from "./config";
+import { EXISTENTIAL_DEPOSIT, GENESIS_ACCOUNT, GENESIS_ACCOUNT_PRIVATE_KEY } from "./config";
 import { createAndFinalizeBlock, customRequest, describeWithFrontier } from "./util";
 
 chaiUse(chaiAsPromised);
@@ -66,7 +66,8 @@ describeWithFrontier("Frontier RPC (StateOverride)", (context) => {
 		expect(balance.gten(1000), "balance was not above 1000 tether").to.be.true;
 	});
 
-	it("should have a sender balance of 5000 with state override", async function () {
+	it("should have a sender balance of 5 ether with state override", async function () {
+		const overrideBalance = Web3.utils.toWei("5", "ether");
 		const { result } = await customRequest(context.web3, "eth_call", [
 			{
 				from: GENESIS_ACCOUNT,
@@ -76,11 +77,13 @@ describeWithFrontier("Frontier RPC (StateOverride)", (context) => {
 			"latest",
 			{
 				[GENESIS_ACCOUNT]: {
-					balance: Web3.utils.numberToHex(5000),
+					balance: Web3.utils.numberToHex(overrideBalance),
 				},
 			},
 		]);
-		expect(Web3.utils.hexToNumberString(result)).to.equal("4500"); // 500 is ED
+		expect(Web3.utils.hexToNumberString(result)).to.equal(
+			(Web3.utils.toBN(overrideBalance).sub(Web3.utils.toBN(EXISTENTIAL_DEPOSIT))).toString()
+		);
 	});
 
 	it("should have availableFunds of 100 without state override", async function () {

@@ -7,7 +7,7 @@ import { createAndFinalizeBlock, describeWithFrontier, customRequest } from "./u
 describeWithFrontier("Frontier RPC (Balance)", (context) => {
 	const TEST_ACCOUNT = "0xdd33Af49c851553841E94066B54Fd28612522901";
 	const TEST_ACCOUNT_PRIVATE_KEY = "0x4ca933bffe83185dda76e7913fc96e5c97cdb7ca1fbfcc085d6376e6f564ef71";
-	const TRANFER_VALUE = "0x200"; // 512, must be higher than ExistentialDeposit
+	const TRANFER_VALUE = "0x" + (BigInt(EXISTENTIAL_DEPOSIT) + BigInt(12)).toString(16); // keep transfer > ED
 
 	var nonce = 0;
 
@@ -39,7 +39,7 @@ describeWithFrontier("Frontier RPC (Balance)", (context) => {
 			BigInt(21000) * BigInt(gasPrice) -
 			BigInt(TRANFER_VALUE)
 		).toString();
-		const expectedTestBalance = (Number(TRANFER_VALUE) - EXISTENTIAL_DEPOSIT).toString();
+		const expectedTestBalance = (BigInt(TRANFER_VALUE) - BigInt(EXISTENTIAL_DEPOSIT)).toString();
 		expect(await context.web3.eth.getBalance(GENESIS_ACCOUNT, "pending")).to.equal(expectedGenesisBalance);
 		expect(await context.web3.eth.getBalance(TEST_ACCOUNT, "pending")).to.equal(expectedTestBalance);
 
