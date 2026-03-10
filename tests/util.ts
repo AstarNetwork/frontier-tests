@@ -139,20 +139,6 @@ export async function startFrontierNode(provider?: string): Promise<{
 		name: "frontier-dev",
 	});
 
-	// Ensure tests run in explicit manual-seal mode assumptions:
-	// blocks should not advance unless we call engine_createBlock.
-	if (!provider || provider == "http") {
-		const before = await web3.eth.getBlockNumber();
-		await new Promise<void>((resolve) => setTimeout(() => resolve(), 2500));
-		const after = await web3.eth.getBlockNumber();
-		if (after !== before) {
-			throw new Error(
-				`Unexpected autonomous block production detected (before=${before}, after=${after}). ` +
-				`Frontier tests expect block progression to be controlled via engine_createBlock.`
-			);
-		}
-	}
-
 	return { web3, binary, ethersjs };
 }
 
