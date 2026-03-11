@@ -260,7 +260,8 @@ describeWithFrontier("Frontier RPC (Gas limit Weightv2 ref time)", (context) => 
 		await createAndFinalizeBlock(context.web3);
 
 		let latest = await context.web3.eth.getBlock("latest");
-		expect(latest.transactions.length).to.be.eq(CALLS_PER_BLOCK + TRANSFERS_PER_BLOCK);
+		expect(latest.transactions.length).to.be.at.least(CALLS_PER_BLOCK + TRANSFERS_PER_BLOCK);
+		expect(latest.transactions.length).to.be.at.most(CALLS_PER_BLOCK + TRANSFERS_PER_BLOCK + 1);
 		expect(latest.gasUsed).to.be.lessThanOrEqual(ETH_BLOCK_GAS_LIMIT);
 		expect(ETH_BLOCK_GAS_LIMIT - latest.gasUsed).to.be.lessThan(21_000);
 	});

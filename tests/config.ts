@@ -1,18 +1,18 @@
 export const GENESIS_ACCOUNT = "0xaaafB3972B05630fCceE866eC69CdADd9baC2771";
 export const GENESIS_ACCOUNT_PRIVATE_KEY = "0x01ab6e801c06e59ca97a14fc0a1978b27fa366fc87450e0b65459dd3515b7391";
-export const GENESIS_ACCOUNT_BALANCE = "999999999999999999999999500";
+export const GENESIS_ACCOUNT_BALANCE = "999999999999999999999000000";
 
 export const FIRST_CONTRACT_ADDRESS = "0x687528e4BC4040DC9ADBA05C1f00aE3633faa731";
 
-export const RUNTIME_SPEC_NAME = "local";
+export const RUNTIME_SPEC_NAME = "shibuya";
 export const RUNTIME_SPEC_VERSION = 1;
 export const RUNTIME_IMPL_VERSION = 1;
 
-export const CHAIN_ID = 4369;
+export const CHAIN_ID = 81;
 export const BLOCK_TIMESTAMP = 6; // 6 seconds per block
 export const BLOCK_HASH_COUNT = 256;
-export const EXISTENTIAL_DEPOSIT = 500; // The minimum amount required to keep an account open
-export const ETH_BLOCK_GAS_LIMIT = 30000000; // The same configuration as runtime
+export const EXISTENTIAL_DEPOSIT = 1_000_000; // Shibuya runtime existential deposit
+export const ETH_BLOCK_GAS_LIMIT = 60_000_000; // Shibuya local-dev runtime block gas limit
 export const ETH_BLOCK_POV_LIMIT = 5 * 1024 * 1024; // The same configuration as runtime
 
 // ERC20 used to test pov size transfer tests, not meant to be interacted with

@@ -71,13 +71,8 @@ export async function startFrontierNode(provider?: string): Promise<{
 	const cmd = BINARY_PATH;
 	const args = [
 		`--dev`,
-		`--validator`, // Required by manual sealing to author the blocks
-		`--execution=Native`, // Faster execution using native
 		`--no-telemetry`,
 		`--no-prometheus`,
-		// `--sealing=Manual`,
-		`--no-grandpa`,
-		`--force-authoring`,
 		`-l${FRONTIER_LOG}`,
 		`--port=${PORT}`,
 		`--rpc-port=${RPC_PORT}`,
@@ -116,7 +111,7 @@ export async function startFrontierNode(provider?: string): Promise<{
 				console.log(chunk.toString());
 			}
 			binaryLogs.push(chunk);
-			if (chunk.toString().match(/best: #0/)) {
+			if (chunk.toString().match(/Imported #\d+|best: #\d+/)) {
 				if (!provider || provider == "http") {
 					// This is needed as the EVM runtime needs to warmup with a first call
 					await web3.eth.getChainId();
