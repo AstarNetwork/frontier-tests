@@ -114,22 +114,37 @@ describeWithFrontier("Frontier RPC (EthFilterApi)", (context) => {
 	});
 
 	step("should return responses for Log filter polling.", async function () {
-		// Create contract.
-		let tx = await sendTransaction(context);
-		await createAndFinalizeBlock(context.web3);
-		let receipt = await context.web3.eth.getTransactionReceipt(tx.transactionHash);
+		const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 
-		expect(receipt.logs.length).to.be.eq(1);
+    // Compute the contract address deterministically (RLP(sender, nonce))
+    // so we can create the filter BEFORE sending the transaction. This
+    // ensures the filter's journal cursor (captured at creation time)
+    // precedes the log emitted by this transaction.
+    const rlp = require("rlp");
+    const contractAddress =
+        "0x" +
+        require("ethereumjs-util")
+            .keccak256(rlp.encode([GENESIS_ACCOUNT, nonce]))
+            .slice(-20)
+            .toString("hex");
 
-		// Create a filter for the created contract.
-		let createFilter = await customRequest(context.web3, "eth_newFilter", [
-			{
-				fromBlock: "0x0",
-				toBlock: "latest",
-				address: receipt.contractAddress,
-				topics: receipt.logs[0].topics,
-			},
-		]);
+    // Create a filter for the contract address we expect, before the tx exists.
+    let createFilter = await customRequest(context.web3, "eth_newFilter", [
+        {
+            fromBlock: "0x0",
+            toBlock: "latest",
+            address: contractAddress,
+            topics: [TRANSFER_TOPIC],
+        },
+    ]);
+
+		// Now send the contract-creation transaction and finalize.
+    let tx = await sendTransaction(context);
+    await createAndFinalizeBlock(context.web3);
+    let receipt = await context.web3.eth.getTransactionReceipt(tx.transactionHash);
+
+    expect(receipt.logs.length).to.be.eq(1);
+    
 		let poll = await customRequest(context.web3, "eth_getFilterChanges", [createFilter.result]);
 
 		expect(poll.result.length).to.be.eq(1);
